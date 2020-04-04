@@ -9,7 +9,7 @@ using namespace std;
 const int N = 100005, M = 11;
 int mod = 1000000007;
 int twomods[100001];
-void build(string str, int *tree, int start, int end, int node)
+void build(char *str, int *tree, int start, int end, int node)
 {
     if(start == end)
     {
@@ -26,7 +26,7 @@ void build(string str, int *tree, int start, int end, int node)
     tree[node] = ((tree[2*node]*mul)%3 + tree[2*node+1])%3;
 }
 
-void update(string str , int *tree, int start, int end, int index, int node)
+void update(char *str , int *tree, int start, int end, int index, int node)
 {
     if(start == end)
     {
@@ -62,7 +62,7 @@ int query(int *tree, int start, int end, int l, int r, int node)
 
 int32_t main(){
     int n,q;
-    string str;
+    char str[100001];
     twomods[0] = 1;
     for (int  i = 1; i < 100001; i++)
     {
@@ -78,7 +78,7 @@ int32_t main(){
     // cout<<"length : "<<str.length()<<endl;
     int *tree = new int[4*n];
     build(str, tree, 0, n-1, 1);
-    // for (int i = 0; i < 4*n; i++)
+    // for (int i = 0; stringi < 4*n; i++)
     // {
     //     cout<<tree[i]<<" ";
     // }
