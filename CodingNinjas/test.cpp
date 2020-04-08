@@ -35,9 +35,10 @@ bool isPossible(char graph[][102], int row, int col, int n, int m, char str[], i
             if(flag == true)
                 return flag;
         }
+        visited[row][col] = false;
         
     }
-    return flag;
+    return false;
 }
 
 int solve(char graph[][MAXN],int n, int m)
@@ -48,6 +49,10 @@ int solve(char graph[][MAXN],int n, int m)
     for (int i = 0; i < n; i++)
     {
         visited[i] = new bool[m];
+		for(int j = 0 ; j < m; j++)
+        {
+            visited[i][j] = false;
+        }
     }
     
     
@@ -59,14 +64,6 @@ int solve(char graph[][MAXN],int n, int m)
         {
             if(graph[i][j] == 'C')
             {
-                for (int i = 0; i < n; i++)
-                {
-                    for (int j = 0; j < m; j++)
-                    {
-                        visited[i][j] = false;
-                    }
-                    
-                }
                 flag = isPossible(graph, i, j, n, m, str, 0, visited);
                 if(flag == true)
                     return 1;
