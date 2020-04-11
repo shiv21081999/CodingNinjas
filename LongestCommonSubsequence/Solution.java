@@ -25,5 +25,17 @@ public class Solution {
 		dp[s1.length()][s2.length()] = ans;
 		return ans; 
 	}
-	
+	public static int lcs(String s1, String s2)
+	{
+		int m = s2.length();
+		int n = s2.length();
+		int[][] ans = new int[m+1][n+1];
+		for (int i = 0; i < ans.length; i++) {
+			ans[i][0] = 0;
+		}
+		for (int i = 0; i < ans[0].lenght; i++) {
+			ans[0][i] = 0;
+		}
+		
+	}
 }

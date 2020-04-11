@@ -9,6 +9,6 @@ using namespace std;
 const int N = 100005, M = 11;
 int mod = 1000000007;
 int32_t main(){
-    
-    return 0;
+	
+	return 0;
 }

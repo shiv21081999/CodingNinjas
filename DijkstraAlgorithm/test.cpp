@@ -39,14 +39,14 @@ void getMinPath(int **edges, int n, bool *visited)
     {
         int minVertex = getMinIndex(visited, dist, n);
         visited[minVertex] = true;
-        for (int i = 0; i < n; i++)
+        for (int j = 0; j < n; j++)
         {
-            if(!visited[i] && edges[minVertex][i] !=0)
+            if(!visited[j] && edges[minVertex][j] !=0)
             {
-                if(dist[minVertex]+edges[minVertex][i] < dist[i])
+                if(dist[minVertex]+edges[minVertex][j] < dist[j])
                 {
-                    dist[i] = dist[minVertex]+edges[minVertex][i];
-                    parent[i] = minVertex;
+                    dist[j] = dist[minVertex]+edges[minVertex][j];
+                    parent[j] = minVertex;
                 }
             }
         }
