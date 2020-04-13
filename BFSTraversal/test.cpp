@@ -16,8 +16,8 @@ void printBFS(int** edges, int n, int sv, bool *visited)
     visited[sv] = true;
     while(!q.empty())
     {
-        q.pop();
         int node = q.front();
+        q.pop();
         cout<<node<<" ";
         for (int i = 0; i < n; i++)
         {
