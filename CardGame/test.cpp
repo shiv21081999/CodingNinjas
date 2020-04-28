@@ -1,154 +1,114 @@
-#include<bits/stdc++.h>
+#include <iostream>
+#include <algorithm>
+#include <vector>
+#include <cmath>
+#include <map>
 using namespace std;
-#define int long long int
-#define ld long double
-#define F first
-#define S second
-#define P pair<int,int>
-#define pb push_back
-const int N = 100005, M = 11;
-int mod = 1000000007;
 
-bool isPossible(unordered_map<int, int> factorsK, unordered_map<int, int> factorsarr)
+map<int,int> returnPrimeFactors(long k)
 {
-	if(factorsarr.size() < factorsK.size())
-		return false;
-	for (auto x : factorsK)
-	{		
-		if(factorsarr[x.F]<x.S)
-			return false;
-	}
-	return true;
+    map<int,int> primeFactors;
+    while(k % 2 == 0)
+    {
+        primeFactors[2]++;
+        k /=2 ;
+    }
+
+    for(int i = 3; i <= sqrt(k) ; i++)
+    {
+        while(k % i == 0)
+        {
+            primeFactors[i]++;
+            k /= i;
+        } 
+    }
+
+    if(k > 2)
+        primeFactors[k]++;
+    
+    return primeFactors;
+}
+long long countWaysK(vector<long> arr,long n,long k)
+{
+    map<int,int> primeFactorsK = returnPrimeFactors(k);
+    map<int,int> primeFactorsA;
+    vector<bool> visited(n);
+
+    long i=0,j=0,s=0;
+    long ans = 0;
+    while(i<n && j<n)
+    {
+        // cout<<"\nj "<<j<<" i "<<i;
+        int flag = 0;
+        for(auto it:primeFactorsK)
+        {
+            int p = it.first;
+            int count = 0;
+            long val = arr[j];
+            while(val % p == 0)
+            {
+                count++;
+                val /= p;
+            }
+            if(!visited[j])
+                primeFactorsA[p] += count;
+            // cout<<"\nFact: "<<primeFactorsA[p]<<" "<<it.second;
+            if(primeFactorsA[p] < it.second)
+            {
+                // cout<<"\nFlagged"<<arr[j];
+                flag = 1;
+            }
+        }
+
+        if(!flag)
+        {
+            // cout<<"\nNot Flag: "<<arr[j];
+            ans += (n-j);
+            s = i;
+            visited[j] = true;
+            // cout<<"\nAns: "<<ans;
+            i++;
+            int m = i-1;
+            while(m >= s)
+            {
+                int flag = 0;
+                for(auto it:primeFactorsK)
+                {
+                    int p = it.first;
+                    int count = 0;
+                    long val = arr[m];
+                    while(val % p == 0)
+                    {
+                        count++;
+                        val /= p;
+                    }
+                    primeFactorsA[p] -= count;
+                    // cout<<"\nRem "<<arr[m]<<" "<<primeFactorsA[p]<<" "<<it.second;
+                    if(primeFactorsA[p] < it.second)
+                    {
+                        flag = 1;
+                    }
+                }
+                if(flag)
+                    break;
+                m--;
+            }
+        }
+        else
+            j++;
+    }
+    return ans;
 }
 
-void factorize1(int n, int mode, unordered_map<int,int> &factors)
+int main()
 {
-	int count = 0;
-	while(n%2==0 && n > 1 && factors.find(2)!= factors.end())
-	{
-		count++;
-		n/=2;
-	}
-	if(mode == 0 && count!=0)
-		factors[2]+=count;
-	else if(factors.find(2)!=factors.end() && factors[2]!=0)
-		factors[2]-=count;
-	if(n>1)
-	{
-		for (int i = 3; i*i <= n; i+=2)
-		{
-			count = 0;
-			while(n%i == 0 && n>1 && factors.find(i)!=factors.end())
-			{
-				count++;
-				n/=i;
-			}
-			if(mode && factors.find(i)!=factors.end() && factors[i]!=0)
-				factors[i]-=count;
-			else if(count != 0)
-				factors[i]+=count;
-		}
-	}
-	
-	if(n>1)
-	{
-		if(mode && factors.find(n)!=factors.end() && factors[n]!=0)
-			factors[n]-=1;
-		else
-			factors[n]+=1;
-	}
-}
+    long n,k,i,j;
+    cin >> n >> k;
 
-void factorize(int n, int mode, unordered_map<int, int> &factors)
-{
-	int count = 0;
-	while(n%2==0 && n > 1)
-	{
-		count++;
-		n/=2;
-	}
-	if(mode == 0 && count!=0)
-		factors[2]+=count;
-	else if(factors.find(2)!=factors.end() && factors[2]!=0)
-		factors[2]-=count;
-	if(n>1)
-	{
-		for (int i = 3; i*i <= n; i+=2)
-		{
-			count = 0;
-			while(n%i == 0 && n>1)
-			{
-				count++;
-				n/=i;
-			}
-			if(mode && factors.find(i)!=factors.end() && factors[i]!=0)
-				factors[i]-=count;
-			else if(count != 0)
-				factors[i]+=count;
-		}
-	}
-	
-	if(n>1)
-	{
-		if(mode && factors.find(n)!=factors.end() && factors[n]!=0)
-			factors[n]-=1;
-		else
-			factors[n]+=1;
-	}
+    vector<long> arr(n);
+    for(i = 0; i < n ; i++)
+        cin >> arr[i];
 
-}
+    cout<<countWaysK(arr,n,k)<<endl;
 
-int32_t main(){
-	int n, k;
-	cin>>n>>k;
-	int *arr = new int[n];
-	for (int i = 0; i < n; i++)
-	{
-		cin>>arr[i];
-	}
-	int i = 0 , j = 0;
-	unordered_map<int, int> factorsK;
-	unordered_map<int, int> factorsarr;
-	int count = 0;
-	factorize(k, 0, factorsK);
-	// for (auto x : factorsK)
-	// {
-	// 	cout<<x.F<<" "<<x.S<<endl;
-	// }
-	// cout<<endl;
-	for (auto x : factorsK)
-	{
-		factorsarr[x.F] = 0;
-	}
-	
-	int flag = true;
-	while(i < n && j <n)
-	{
-		if(flag)
-			factorize1(arr[j], 0, factorsarr);
-		// for (auto x : factorsarr)
-		// {
-		// 	cout<<x.F<<" "<<x.S<<endl;
-		// }
-		// cout<<endl;
-		flag = true;
-		if(isPossible(factorsK, factorsarr))
-		{
-			count+=(n-j);
-			// cout<<"DELETE"<<endl;
-			factorize1(arr[i], 1, factorsarr);
-			// for (auto x : factorsarr)
-			// {
-			// 	cout<<x.F<<" "<<x.S<<endl;
-			// }
-			// cout<<endl;
-			flag = false;
-			i++;
-
-		}
-		else
-			j++;
-	}
-	cout<<count<<endl;
-	return 0;
 }

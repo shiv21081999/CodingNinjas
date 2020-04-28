@@ -1,6 +1,3 @@
-/*
-In this code we have to use printf and scanf to print and scan the input and output resp :)
-*/
 #include<bits/stdc++.h>
 using namespace std;
 #define int long long int
@@ -8,65 +5,108 @@ using namespace std;
 #define F first
 #define S second
 #define P pair<int,int>
-#define pb push_back
+#define pb push_back 
 const int N = 100005, M = 11;
 int mod = 1000000007;
 
-int modularExponentiation(int a, int b, int m)
+struct Point{
+    double x;
+    double y;
+};
+
+bool checkCorner(Point a, Point b, Point c)
 {
-	int res = 1;
-	while(b > 0)
-	{
-		if(b&1)
-		{
-			res = (res * a)%mod;
-		}
-		a = (a*a)%mod;
-		b = b>>1;
-	}
-	return res;
+    Point ab;
+    Point ac;
+    Point bc;
+    ab.x = b.x - a.x;
+    ab.y = b.y - a.y;
+    ac.x = c.x - a.x;
+    ac.y = c.y - a.y;
+    bc.x = c.x - b.x;
+    bc.y = c.y - b.y;
+    if((ab.x*ac.x + ab.y*ac.y) > 0 && (ab.x*bc.x + ab.y*bc.y) < 0)
+    {
+        return false;
+    }
+    cout<<a.x<<","<<a.y<<" "<<b.x<<","<<b.y<<" "<<c.x<<","<<c.y<<endl;
+
+
+    return true;
 }
 
-void factMod(int *factmod)
+bool isPossible(Point a, Point b, Point *arr, int n)
 {
-	factmod[0] = 1;
-	int fact = 1;
-	for (int i = 1; i <= 1000000; i++)
-	{
-		fact = (fact*i)%mod;
-		factmod[i] = fact;
-	}
-	
+    Point ab;
+    ab.x = b.x-a.x;
+    ab.y = b.y-a.y; 
+    for (int i = 0; i < n; i++)
+    {
+        Point c = arr[i];
+        Point ac;
+        Point bc;
+        ac.x = c.x - a.x;
+        ac.y = c.y - a.y;
+        bc.x = c.x - b.x;
+        bc.y = c.y - b.y;
+        if((ab.x*ac.x + ab.y*ac.y) > 0 && (ab.x*bc.x + ab.y*bc.y) < 0)
+        {
+            return false;
+        }
+    }
+    return true;
 }
 
-void factInvMod(int *factinvmod, int *factmod)
+double distance(Point a, Point b)
 {
-	factinvmod[0] = 1;
-	for (int i = 1; i < 1000001; i++)
-	{
-		factinvmod[i] = modularExponentiation(factmod[i], mod-2, mod);
-	}
-	
+    double dist = sqrt((a.x - b.x)*(a.x - b.x) + (a.y - b.y)*(a.y - b.y));
+    return dist;
 }
 
 int32_t main(){
-	int *factmod = new int[1000001];
-	int *factinvmod = new int[1000001];
-	factMod(factmod);
-	factInvMod(factinvmod, factmod);
-	int t;
-	scanf("%lli",&t);
-	while(t--){
-		int n,k;
-		scanf("%lli%lli", &n,&k);
-		int mul = modularExponentiation(2,k,mod);
-		int mul1 = factmod[n];
-		int mul2 = factinvmod[n-k];
-		int mul3 = factinvmod[k];
-		int ans = ((((mul%mod)*(mul1%mod))%mod)*(((mul2%mod)*(mul3%mod))%mod))%mod;
-		printf("%lli\n",ans);
-	}
-	delete [] factmod;
-	delete [] factinvmod;
-	return 0;
+    int n;
+    cin>>n;
+    Point* points = new Point[n];
+    for (int i = 0; i < n; i++)
+    {
+        cin>>points[i].x;
+    }
+    for (int i = 0; i < n; i++)
+    {
+        cin>>points[i].y;
+    }
+    sort(points, points + n, [&](Point a, Point b)
+         {
+             return a.y<b.y;
+         });
+    double finalmax = max(points[0].y, 200 - points[n-1].y);
+    Point corner1, corner2, corner3, corner4;
+    corner1.x = 0; corner2.x = 0; corner3.x = 200; corner4.x = 200;
+    corner1.y = 0; corner2.y = 200; corner3.y = 0; corner4.y = 200;
+    for (int i = 0; i < n-1; i++)
+    {
+        for (int j = i+1; j < n; j++)
+        {
+            if(points[i].y != points[j].y && isPossible(points[i],points[j], points, n))
+            {
+                if(checkCorner(points[i],points[j],corner1) && checkCorner(points[i],points[j],corner2) && checkCorner(points[i],points[j],corner3) && checkCorner(points[i],points[j],corner4))
+                {
+                    double dist = distance(points[i], points[j]);
+                    if(dist > finalmax)
+                        finalmax = dist;
+                }
+            }
+        }
+        
+    }
+    if((double)((int)finalmax) == finalmax)
+    {
+        cout<<(int)finalmax -1<<endl;
+    }
+    else
+    {
+        cout<<(int)finalmax<<endl;
+    }
+    
+    return 0;
 }
